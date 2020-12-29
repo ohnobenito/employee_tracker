@@ -26,7 +26,7 @@ function start() {
         name: "toDo",
         type: "list",
         message: "Would you like to do?",
-        choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "View All Roles", "Exit"]
+        choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "View All Roles", "Add Department", "View All Departments", "Exit"]
     })
     .then(function(answer) {
         //if statements for each possible answer
@@ -58,6 +58,10 @@ function start() {
             //insert function for viewing all roles
             viewRoles();
 
+        } else if (answer.toDo === "Add Department") {
+            addDepartment();
+        } else if (answer.toDo === "View All Departments") {
+            viewDepartments();
         } else {
             connection.end();
             console.log("Bye Nina")
@@ -147,15 +151,19 @@ function updateManager() {
     console.log("Update Manager Test");
 };
 
-//Function to add a role
+//Function to add role
 function addRole() {
-    console.log("Add Role Test");
+    console.log ("Add Role test")
+};
+
+//Function to add a role
+function addDepartment() {
     inquirer
     .prompt([
         {
             name: "deptName",
             type: "input",
-            message: "What Role would you like added to the department list?"
+            message: "What would you like added to the department list?"
         }
     ])
     .then(function(answer) {
@@ -171,6 +179,11 @@ function addRole() {
             }
         )
     })
+};
+
+//Function to view all departments
+function viewDepartments() {
+    console.log ("View All Departments Test")
 };
 
 //Function to view all roles
