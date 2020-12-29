@@ -150,6 +150,27 @@ function updateManager() {
 //Function to add a role
 function addRole() {
     console.log("Add Role Test");
+    inquirer
+    .prompt([
+        {
+            name: "deptName",
+            type: "input",
+            message: "What Role would you like added to the department list?"
+        }
+    ])
+    .then(function(answer) {
+        connection.query(
+            "INSERT INTO department SET ?",
+            {
+                dept_name: answer.deptName
+            },
+            function(err) {
+                if (err) throw err;
+                console.log("The department has been added successfully!")
+                start();
+            }
+        )
+    })
 };
 
 //Function to view all roles
