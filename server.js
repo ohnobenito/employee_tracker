@@ -65,33 +65,86 @@ function start() {
     })
 }
 
+//Function to view all current employees
 function viewEmployees() {
     console.log("View All Emps Test");
 };
 
+//Function to view all employees based on department
 function viewDept() {
     console.log("View All Emps by Department test");
 };
 
+//Function to view all employees by their manager
 function viewManager() {
     console.log("View All Emps by Manager test");
 };
 
+//Function to add and Employee to the list
 function addEmployee() {
     console.log("Add Employee Test");
+    inquirer
+    .prompt([
+        {
+            name: "firstname",
+            type: "input",
+            message: "What is the employee's first name?"
+        },
+        {
+            name: "lastname",
+            type: "input",
+            message: "What is the employee's last name?"
+        },
+        {
+            name: "employeeRole",
+            type: "input",
+            message: "What is the employee's role ID?"
+        },
+        {
+            name: "managerId",
+            type: "input",
+            message: "What is the employee's manager id?"
+        }
+    ])
+    .then(function(answer) {
+        connection.query(
+            "INSERT INTO employee SET ?",
+            {
+                first_name: answer.firstname,
+                last_name: answer.lastname,
+                role_id: answer.employeeRole || 0,
+                manager_id: answer.managerId || 0
+            },
+            function(err) {
+                if (err) throw err;
+                console.log("The employee has been added successfully!");
+                start();
+            }
+        );
+    });
 };
+
+//Function to remove an employee
 function removeEmployee() {
     console.log("Remove Emp Test");
 };
+
+//Function to update Roles
 function updateRole() {
     console.log("Update Role Test");
 };
+
+//Function to update Manager
 function updateManager() {
     console.log("Update Manager Test");
 };
+
+//Function to add a role
 function addRole() {
     console.log("Add Role Test");
 };
+
+//Function to view all roles
 function viewRoles() {
     console.log("View All Roles Test")
 };
