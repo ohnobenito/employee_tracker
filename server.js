@@ -10,7 +10,7 @@ let connection = mysql.createConnection({
 
     user: "root",
 
-    password: "fetacheese",
+    password: "",
     database: "employee_db"
 });
 
@@ -153,7 +153,37 @@ function updateManager() {
 
 //Function to add role
 function addRole() {
-    console.log ("Add Role test")
+    inquirer
+    .prompt([
+        {
+            name: "title",
+            type: "input",
+            message: "What is the role you would like added?"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "What is this role's salary?"
+        }
+    ])
+    .then(function(answer) {
+        if (answer.salary === NaN) {
+            console.log ("You must enter a number")
+        } else {
+            connection.query(
+                "INSERT INTO person_role SET ?",
+                {
+                   title: answer.title,
+                   salary: answer.salary 
+                },
+                function(err) {
+                    if (err) throw err;
+                    console.log ("The role was added successfully!");
+                    start();
+                }
+            );
+        };
+    });
 };
 
 //Function to add a role
