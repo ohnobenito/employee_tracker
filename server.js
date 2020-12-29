@@ -10,7 +10,7 @@ let connection = mysql.createConnection({
 
     user: "root",
 
-    password: "",
+    password: "fetacheese",
     database: "employee_db"
 });
 
@@ -184,6 +184,13 @@ function addDepartment() {
 //Function to view all departments
 function viewDepartments() {
     console.log ("View All Departments Test")
+    let query =
+    "SELECT department.id, department.dept_name FROM department";
+    return connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start();
+    });
 };
 
 //Function to view all roles
