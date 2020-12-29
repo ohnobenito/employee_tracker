@@ -68,6 +68,14 @@ function start() {
 //Function to view all current employees
 function viewEmployees() {
     console.log("View All Emps Test");
+    let query = 
+    "SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id FROM employee";
+    return connection.query(query, function (err, res) {
+       if (err) throw err;
+        console.table(res);
+        start();
+    });
+
 };
 
 //Function to view all employees based on department
