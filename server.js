@@ -2,6 +2,10 @@ let mysql = require("mysql");
 let inquirer = require("inquirer");
 let consoleTable = require("console.table");
 
+let roles = [];
+let depts = [];
+let employees = [];
+
 //connect to sql database
 let connection = mysql.createConnection({
     host: "localhost",
@@ -10,7 +14,7 @@ let connection = mysql.createConnection({
 
     user: "root",
 
-    password: "fetacheese",
+    password: "",
     database: "employee_db"
 });
 
@@ -21,6 +25,10 @@ start();
 })
 
 function start() {
+    employee();
+    depart();
+    role();
+
     inquirer
     .prompt({
         name: "toDo",
@@ -69,7 +77,7 @@ function start() {
     })
 }
 
-//Function to view all current employees
+//FUNCTION TO VIEW ALL EMPLOYEES
 function viewEmployees() {
     console.log("View All Emps Test");
     let query = 
@@ -92,7 +100,7 @@ function viewManager() {
     console.log("View All Emps by Manager test");
 };
 
-//Function to add and Employee to the list
+//FUNCTION TO ADD AN EMPLOYEE
 function addEmployee() {
     console.log("Add Employee Test");
     inquirer
@@ -151,7 +159,7 @@ function updateManager() {
     console.log("Update Manager Test");
 };
 
-//Function to add role
+//FUNCTION TO ADD A ROLE
 function addRole() {
     inquirer
     .prompt([
@@ -186,7 +194,7 @@ function addRole() {
     });
 };
 
-//Function to add a role
+//FUNCTION TO ADD A DEPARTMENT
 function addDepartment() {
     inquirer
     .prompt([
@@ -211,7 +219,7 @@ function addDepartment() {
     })
 };
 
-//Function to view all departments
+//FUNCTION TO VIEW ALL DEPARTMENTS
 function viewDepartments() {
     console.log ("View All Departments Test")
     let query =
@@ -223,7 +231,7 @@ function viewDepartments() {
     });
 };
 
-//Function to view all roles
+//FUNCTION TO VIEW ALL ROLES
 function viewRoles() {
     console.log("View All Roles Test")
     let query =
@@ -232,5 +240,34 @@ function viewRoles() {
         if (err) throw err;
         console.table(res);
         start()
-    });
+    })
 };
+
+//FUNCTION FOR EMPTY ARRAYS
+function employee() {
+    connection.query("SELECT * FROM employee", (err, res) => {
+        if (err) throw err;
+        employees = [];
+        for (let i = 0; i < res.length; i++) {
+            employees.push(res[i].first_name + " " + res[i].last_name);
+        }
+    });
+}
+function depart() {
+    connection.query("SELECT * FROM department", (err, res) => {
+        if (err) throw err;
+        depts = [];
+        for (let i = 0; i < res.length; i++) {
+            depts.push(res[i].dept_name);
+        }
+    });
+}
+function role() {
+    connection.query("SELECT * FROM person_role", (err, res) => {
+        if (err) throw err;
+        roles = [];
+        for (let i = 0; i < res.length; i++) {
+            roles.push(res[i].title);
+        }
+    });
+}
