@@ -23,7 +23,7 @@ connection.connect(function(err) {
     if (err) throw err;
 start();
 })
-
+//START FUNCTION
 function start() {
     employee();
     depart();
@@ -77,6 +77,10 @@ function start() {
     })
 }
 
+//-------------------------
+// --- EMPLOYEE SECTION --- 
+//-------------------------
+
 //FUNCTION TO VIEW ALL EMPLOYEES
 function viewEmployees() {
     console.log("View All Emps Test");
@@ -88,16 +92,6 @@ function viewEmployees() {
         start();
     });
 
-};
-
-//Function to view all employees based on department
-function viewDept() {
-    console.log("View All Emps by Department test");
-};
-
-//Function to view all employees by their manager
-function viewManager() {
-    console.log("View All Emps by Manager test");
 };
 
 //FUNCTION TO ADD AN EMPLOYEE
@@ -144,55 +138,20 @@ function addEmployee() {
     });
 };
 
-//Function to remove an employee
-function removeEmployee() {
-    console.log("Remove Emp Test");
-};
-
-//Function to update Roles
-function updateRole() {
-    console.log("Update Role Test");
-};
-
-//Function to update Manager
-function updateManager() {
-    console.log("Update Manager Test");
-};
-
-//FUNCTION TO ADD A ROLE
-function addRole() {
-    inquirer
-    .prompt([
-        {
-            name: "title",
-            type: "input",
-            message: "What is the role you would like added?"
-        },
-        {
-            name: "salary",
-            type: "input",
-            message: "What is this role's salary?"
+// FUNCTION TO ADD EMPLOYEE INFO TO EMPTY ARRAY
+function employee() {
+    connection.query("SELECT * FROM employee", (err, res) => {
+        if (err) throw err;
+        employees = [];
+        for (let i = 0; i < res.length; i++) {
+            employees.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name + " " + res[i].role_id + " " + res[i].manager_id);
         }
-    ])
-    .then(function(answer) {
-        if (answer.salary === NaN) {
-            console.log ("You must enter a number")
-        } else {
-            connection.query(
-                "INSERT INTO person_role SET ?",
-                {
-                   title: answer.title,
-                   salary: answer.salary 
-                },
-                function(err) {
-                    if (err) throw err;
-                    console.log ("The role was added successfully!");
-                    start();
-                }
-            );
-        };
     });
-};
+}
+
+//---------------------------
+// --- DEPARTMENT SECTION ---
+//---------------------------
 
 //FUNCTION TO ADD A DEPARTMENT
 function addDepartment() {
@@ -231,6 +190,56 @@ function viewDepartments() {
     });
 };
 
+//FUNCTION TO ADD ALL DEPARTMENTS TO EMPTY ARRAY
+function depart() {
+    connection.query("SELECT * FROM department", (err, res) => {
+        if (err) throw err;
+        depts = [];
+        for (let i = 0; i < res.length; i++) {
+            depts.push(res[i].id + " " + res[i].dept_name);
+        }
+    });
+}
+
+//----------------------
+// --- ROLES SECTION ---
+//----------------------
+
+//FUNCTION TO ADD A ROLE
+function addRole() {
+    inquirer
+    .prompt([
+        {
+            name: "title",
+            type: "input",
+            message: "What is the role you would like added?"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "What is this role's salary?"
+        }
+    ])
+    .then(function(answer) {
+        if (answer.salary === NaN) {
+            console.log ("You must enter a number")
+        } else {
+            connection.query(
+                "INSERT INTO person_role SET ?",
+                {
+                   title: answer.title,
+                   salary: answer.salary 
+                },
+                function(err) {
+                    if (err) throw err;
+                    console.log ("The role was added successfully!");
+                    start();
+                }
+            );
+        };
+    });
+};
+
 //FUNCTION TO VIEW ALL ROLES
 function viewRoles() {
     console.log("View All Roles Test")
@@ -242,32 +251,46 @@ function viewRoles() {
         start()
     })
 };
-
-//FUNCTION FOR EMPTY ARRAYS
-function employee() {
-    connection.query("SELECT * FROM employee", (err, res) => {
-        if (err) throw err;
-        employees = [];
-        for (let i = 0; i < res.length; i++) {
-            employees.push(res[i].first_name + " " + res[i].last_name);
-        }
-    });
-}
-function depart() {
-    connection.query("SELECT * FROM department", (err, res) => {
-        if (err) throw err;
-        depts = [];
-        for (let i = 0; i < res.length; i++) {
-            depts.push(res[i].dept_name);
-        }
-    });
-}
+// FUNCTION TO ADD ALL ROLES TO EMPTY ARRAY
 function role() {
     connection.query("SELECT * FROM person_role", (err, res) => {
         if (err) throw err;
         roles = [];
         for (let i = 0; i < res.length; i++) {
-            roles.push(res[i].title);
+            roles.push(res[i].id + " " + res[i].title + " " + res[i].salary + " " + res[i].manager_id);
         }
     });
 }
+//-------------------
+// --- LEFT TO DO ---
+//-------------------
+
+//Function to view all employees based on department
+function viewDept() {
+    console.log("View All Emps by Department test");
+};
+
+//Function to view all employees by their manager
+function viewManager() {
+    console.log("View All Emps by Manager test");
+};
+
+//Function to remove an employee
+function removeEmployee() {
+    console.log("Remove Emp Test");
+};
+
+//Function to update Roles
+function updateRole() {
+  
+};
+
+//Function to update Manager
+function updateManager() {
+    console.log("Update Manager Test");
+};
+
+
+
+
+
