@@ -10,7 +10,7 @@ let connection = mysql.createConnection({
 
     user: "root",
 
-    password: "",
+    password: "fetacheese",
     database: "employee_db"
 });
 
@@ -226,4 +226,11 @@ function viewDepartments() {
 //Function to view all roles
 function viewRoles() {
     console.log("View All Roles Test")
+    let query =
+    "SELECT person_role.id, person_role.title, person_role.salary, person_role.department_id FROM person_role";
+    return connection.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        start()
+    });
 };
