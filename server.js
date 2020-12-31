@@ -33,7 +33,7 @@ function start() {
         name: "toDo",
         type: "list",
         message: "Would you like to do?",
-        choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "View All Roles", "Add Department", "View All Departments", "Exit"]
+        choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "View All Roles", "Add Department", "View All Departments","Remove Role", "Remove Department", "Exit"]
     })
     .then(function(answer) {
         //if statements for each possible answer
@@ -69,6 +69,12 @@ function start() {
             addDepartment();
         } else if (answer.toDo === "View All Departments") {
             viewDepartments();
+        } 
+        else if (answer.toDo === "Remove Role") {
+            removeRole();
+        }
+        else if (answer.toDo === "Remove Department") {
+            removeDepartment();
         } else {
             connection.end();
             console.log("Bye Nina")
@@ -385,8 +391,44 @@ function viewManager() {
     console.log("View All Emps by Manager test");
 };
 
-
 //Function to update Manager
 function updateManager() {
     console.log("Update Manager Test");
 };
+//FUNCTION TO REMOVE ROLE
+function removeRole() {
+    connection.query("SELECT * FROM person_role", function(err,results) {
+        if (err) throw err;
+       
+        inquirer
+        .prompt([
+            {
+                name: "removeRoles",
+                type: "list",
+                choices: function() {
+                    let removeArray = [];
+                    for (let i = 0; i < results.length; i++) {
+                        removeArray.push(results[i].title);
+                    }
+                    return removeArray;
+                },
+                message: "Which role would you like to remove?"
+            }
+        ])
+            .then(function(answer) {
+                let role_id;
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].title === answer.removeRoles) {
+                    role_id = results[i].id;
+
+                    let query = role_id;
+                        connection.query("DELETE FROM person_role WHERE person_role.id = ?", query, (err,res) => {
+                        if (err) throw err;
+                        console.log ("Role has been successfully removed!");
+                        start();
+                        })
+                    }
+                }
+            })
+        })
+    };
