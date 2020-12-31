@@ -2,9 +2,6 @@ let mysql = require("mysql");
 let inquirer = require("inquirer");
 let consoleTable = require("console.table");
 
-let roles = [];
-let depts = [];
-let employees = [];
 
 //connect to sql database
 let connection = mysql.createConnection({
@@ -25,9 +22,6 @@ start();
 })
 //START FUNCTION
 function start() {
-    employee();
-    depart();
-    role();
     inquirer
     .prompt({
         name: "toDo",
@@ -143,17 +137,6 @@ function addEmployee() {
     });
 };
 
-// FUNCTION TO ADD EMPLOYEE INFO TO EMPTY ARRAY
-function employee() {
-    connection.query("SELECT * FROM employee", (err, res) => {
-        if (err) throw err;
-        employees = [];
-        for (let i = 0; i < res.length; i++) {
-            employees.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name + " " + res[i].role_id + " " + res[i].manager_id);
-        }
-    });
-    return employees;
-}
 
 //FUNCTION TO REMOVE EMPLOYEE
 function removeEmployee() {
@@ -234,17 +217,43 @@ function viewDepartments() {
     });
 };
 
-//FUNCTION TO ADD ALL DEPARTMENTS TO EMPTY ARRAY
-function depart() {
-    connection.query("SELECT * FROM department", (err, res) => {
+  //FUNCTION TO REMOVE DEPARTMENT
+  function removeDepartment() {
+    connection.query("SELECT * FROM department", function(err,results) {
         if (err) throw err;
-        depts = [];
-        for (let i = 0; i < res.length; i++) {
-            depts.push(res[i].id + " " + res[i].dept_name);
-        }
-    });
-    return depts;
-}
+       
+        inquirer
+        .prompt([
+            {
+                name: "removeDepartment",
+                type: "list",
+                choices: function() {
+                    let removeArray = [];
+                    for (let i = 0; i < results.length; i++) {
+                        removeArray.push(results[i].dept_name);
+                    }
+                    return removeArray;
+                },
+                message: "Which department would you like to remove?"
+            }
+        ])
+            .then(function(answer) {
+                let department_id;
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].dept_name === answer.removeDepartment) {
+                    department_id = results[i].id;
+
+                    let query = department_id;
+                        connection.query("DELETE FROM department WHERE department.id = ?", query, (err,res) => {
+                        if (err) throw err;
+                        console.log ("Department has been successfully removed!");
+                        start();
+                        })
+                    }
+                }
+            })
+        })
+    };
 
 //----------------------
 // --- ROLES SECTION ---
@@ -296,17 +305,7 @@ function viewRoles() {
         start()
     })
 };
-// FUNCTION TO ADD ALL ROLES TO EMPTY ARRAY
-function role() {
-    connection.query("SELECT * FROM person_role", (err, res) => {
-        if (err) throw err;
-        roles = [];
-        for (let i = 0; i < res.length; i++) {
-            roles.push(res[i].id + " " + res[i].title + " " + res[i].salary + " " + res[i].manager_id);
-        }
-    });
-    return roles;
-}
+
 //FUNCTION TO UPDATE ROLES
 function updateRole() {
     connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id FROM employee", function(err,results) {
@@ -375,26 +374,6 @@ function updateRole() {
         })
       })
 }
-
-//-------------------
-// --- LEFT TO DO ---
-//-------------------
-
-//Function to view all employees based on department
-function viewDept() {
-    console.log("View All Emps by Department test");
-
-};
-
-//Function to view all employees by their manager
-function viewManager() {
-    console.log("View All Emps by Manager test");
-};
-
-//Function to update Manager
-function updateManager() {
-    console.log("Update Manager Test");
-};
 //FUNCTION TO REMOVE ROLE
 function removeRole() {
     connection.query("SELECT * FROM person_role", function(err,results) {
@@ -432,3 +411,26 @@ function removeRole() {
             })
         })
     };
+
+//-------------------
+// --- LEFT TO DO ---
+//-------------------
+
+//Function to view all employees based on department
+function viewDept() {
+    console.log("View All Emps by Department test");
+
+};
+
+//Function to view all employees by their manager
+function viewManager() {
+    console.log("View All Emps by Manager test");
+};
+
+//Function to update Manager
+function updateManager() {
+    console.log("Update Manager Test");
+};
+
+
+  
