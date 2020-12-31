@@ -14,7 +14,7 @@ let connection = mysql.createConnection({
 
     user: "root",
 
-    password: "",
+    password: "fetacheese",
     database: "employee_db"
 });
 
@@ -28,7 +28,6 @@ function start() {
     employee();
     depart();
     role();
-
     inquirer
     .prompt({
         name: "toDo",
@@ -147,6 +146,7 @@ function employee() {
             employees.push(res[i].id + " " + res[i].first_name + " " + res[i].last_name + " " + res[i].role_id + " " + res[i].manager_id);
         }
     });
+    return employees;
 }
 
 //---------------------------
@@ -199,6 +199,7 @@ function depart() {
             depts.push(res[i].id + " " + res[i].dept_name);
         }
     });
+    return depts;
 }
 
 //----------------------
@@ -260,6 +261,7 @@ function role() {
             roles.push(res[i].id + " " + res[i].title + " " + res[i].salary + " " + res[i].manager_id);
         }
     });
+    return roles;
 }
 //-------------------
 // --- LEFT TO DO ---
@@ -280,10 +282,74 @@ function removeEmployee() {
     console.log("Remove Emp Test");
 };
 
-//Function to update Roles
+//FUNCTION TO UPDATE ROLES
 function updateRole() {
-  
-};
+    connection.query("SELECT employee.first_name, employee.last_name, employee.role_id FROM employee", function(err,results) {
+        if (err) throw err;
+       
+        inquirer
+        .prompt([
+            {
+                name: "empNames",
+                type: "list",
+                choices: function() {
+                    let empArray = [];
+                    for (let i = 0; i < results.length; i++) {
+                        empArray.push(results[i].first_name + " " + results[i].last_name);
+                    }
+                    return empArray;
+                },
+                message: "Which employee would you like to update the role for?"
+            },
+        ])
+        .then(function(answer) {
+            let employee_id;
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].first_name + " " + results[i].last_name === answer.empNames) {
+                    employee_id = results[i].role_id;
+                    console.log("This is the emp ID " + employee_id);
+                }
+            }
+      
+            connection.query("SELECT * FROM person_role", function(err,results) {
+                if (err) throw (err);
+      
+                inquirer
+                .prompt([
+                    {
+                        name: "roles",
+                        type: "list",
+                        choices: function() {
+                            let roleArray = [];
+                            for (let i = 0; i < results.length; i++) {
+                                roleArray.push(results[i].title);
+                            }
+                            return roleArray;
+                        },
+                        message: "Please select a role to update the employee to:"
+                    }
+                ])
+                .then(function(answer) {
+                    let role_id;
+                    for (let i = 0; i < results.length; i++) {
+                        if (results[i].title === answer.roles) {
+                            role_id = results[i].id;
+                            console.log ("This is the role id " + role_id);
+                        }
+                    }
+
+                    let queryAnswer = [role_id, employee_id]
+                    connection.query("UPDATE employee SET role_id = ? WHERE id = ?", queryAnswer, (err, res) => {
+                        if (err) throw err;
+                        console.log ("Employee was successfully updated!");
+                        start();
+                    })
+                })
+      
+            })
+        })
+      })
+}
 
 //Function to update Manager
 function updateManager() {
