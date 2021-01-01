@@ -110,7 +110,7 @@ function start() {
 //FUNCTION TO VIEW ALL EMPLOYEES
 function viewEmployees() {
     let query = 
-    "SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id FROM employee";
+    "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, person_role.title, person_role.salary, department.dept_name FROM employee LEFT JOIN person_role ON employee.role_id = person_role.id LEFT JOIN department ON person_role.department_id = department.id;";
     return connection.query(query, function (err, res) {
        if (err) throw err;
         console.table(res);
@@ -474,6 +474,23 @@ function removeRole() {
 //Function to view all employees based on department
 function viewDept() {
     console.log("View All Emps by Department test");
+    inquirer
+    .prompt([
+        {
+            name: "viewDept",
+            type: "list",
+            choices: departmentsarray,
+            message: "Please choose which department you'd like to view employees of"
+        }
+    ]).then(function(answer) {
+    let query = answer.viewDept[0]  
+    connection.query(
+    "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, person_role.title, person_role.salary, department.dept_name FROM employee LEFT JOIN person_role ON employee.role_id = person_role.id LEFT JOIN department ON person_role.department_id = department.id WHERE department.id = ?", query, (err, res) => {
+       if (err) throw err;
+        console.table(res);
+        start();
+    });
+    })
 };
 
 //Function to view all employees by their manager
