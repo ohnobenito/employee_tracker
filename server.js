@@ -516,6 +516,73 @@ function viewManager() {
 
 //Function to update Manager
 function updateManager() {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, employee.role_id FROM employee", function(err,results) {
+        if (err) throw err;
+       
+        inquirer
+        .prompt([
+            {
+                name: "empNames",
+                type: "list",
+                choices: function() {
+                    let empArray = [];
+                    for (let i = 0; i < results.length; i++) {
+                        empArray.push(results[i].first_name + " " + results[i].last_name);
+                    }
+                    return empArray;
+                },
+                message: "Which employee would you like to update the manager for?"
+            },
+        ])
+        .then(function(answer) {
+            let employee_id;
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].first_name + " " + results[i].last_name === answer.empNames) {
+                    employee_id = results[i].id;
+                    console.log("This is the emp ID " + employee_id);
+                }
+            }
+      
+            connection.query("SELECT * FROM employee", function(err,results) {
+                if (err) throw (err);
+      
+                inquirer
+                .prompt([
+                    {
+                        name: "manager",
+                        type: "list",
+                        choices: function() {
+                            let manArray = [];
+                            for (let i = 0; i < results.length; i++) {
+                                if (results[i].manager_id === null) {
+                                manArray.push(results[i].first_name + " " + results[i].last_name);
+                                }
+                            }
+                            return manArray;
+                        },
+                        message: "Please select a manager to update the employee to:"
+                    }
+                ])
+                .then(function(answer) {
+                    let man_id;
+                    for (let i = 0; i < results.length; i++) {
+                        if (results[i].first_name + " " + results[i].last_name === answer.manager) {
+                            man_id = results[i].id;
+                            
+                        }
+                    }
+
+                    let queryAnswer = [man_id, employee_id]
+                    connection.query("UPDATE employee SET manager_id = ? WHERE employee.id = ?", queryAnswer, (err, res) => {
+                        if (err) throw err;
+                        console.log(chalk.green("Employee was successfully updated!"));
+                        start();
+                    })
+                })
+      
+            })
+        })
+      })
     
 }
 
