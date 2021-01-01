@@ -320,17 +320,24 @@ function addRole() {
             name: "salary",
             type: "input",
             message: "What is this role's salary?"
+        },
+        {
+            name: "department",
+            type: "list",
+            choices: departmentsarray,
+            message: "Please select which department this role belongs to"
         }
     ])
     .then(function(answer) {
-        if (answer.salary === NaN) {
-            console.log ("You must enter a number")
+        if (answer.salary === isNaN) {
+            console.log("You must enter a valid number")
         } else {
             connection.query(
                 "INSERT INTO person_role SET ?",
                 {
                    title: answer.title,
-                   salary: answer.salary 
+                   salary: answer.salary,
+                   department_id: answer.department[0]
                 },
                 function(err) {
                     if (err) throw err;
