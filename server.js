@@ -1,6 +1,8 @@
-let mysql = require("mysql");
-let inquirer = require("inquirer");
-let consoleTable = require("console.table");
+const mysql = require("mysql");
+const inquirer = require("inquirer");
+const consoleTable = require("console.table");
+const chalk = require("chalk");
+const logo = require('asciiart-logo');
 
 
 //connect to sql database
@@ -15,13 +17,39 @@ let connection = mysql.createConnection({
     database: "employee_db"
 });
 
+let rolesarray = [];
+let departmentsarray = [];
+let employeesarray = [];
+let managersarray = [];
+
 // connect to the mysql server
 connection.connect(function(err) {
     if (err) throw err;
-start();
+init();
 })
+
+function init() {
+    const logoText = logo
+    ({
+        name: "Employee Management System",
+        font: "Colossal",
+        fontSize: "5px",
+        borderColor: "blue",
+        logoColor: "red",
+        textColor: "bold-black",
+    })
+    .render();
+    console.log(logoText);
+    start();
+}
+
 //START FUNCTION
 function start() {
+    roleArray();
+    departmentArray();
+    employeeArray();
+    managerArray();
+
     inquirer
     .prompt({
         name: "toDo",
@@ -58,7 +86,6 @@ function start() {
         } else if (answer.toDo === "View All Roles") {
             //insert function for viewing all roles
             viewRoles();
-
         } else if (answer.toDo === "Add Department") {
             addDepartment();
         } else if (answer.toDo === "View All Departments") {
@@ -71,7 +98,7 @@ function start() {
             removeDepartment();
         } else {
             connection.end();
-            console.log("Bye Nina")
+            console.log(chalk.green("Thank you for using Employee Tracker!"));
         };
     })
 }
@@ -82,7 +109,6 @@ function start() {
 
 //FUNCTION TO VIEW ALL EMPLOYEES
 function viewEmployees() {
-    console.log("View All Emps Test");
     let query = 
     "SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id FROM employee";
     return connection.query(query, function (err, res) {
@@ -95,7 +121,8 @@ function viewEmployees() {
 
 //FUNCTION TO ADD AN EMPLOYEE
 function addEmployee() {
-    console.log("Add Employee Test");
+    managersarray.push('none');
+
     inquirer
     .prompt([
         {
@@ -110,30 +137,51 @@ function addEmployee() {
         },
         {
             name: "employeeRole",
-            type: "input",
-            message: "What is the employee's role ID?"
+            type: "list",
+            choices: rolesarray,
+            message: "What is the employee's role?"
         },
         {
             name: "managerId",
-            type: "input",
-            message: "What is the employee's manager id?"
+            type: "list",
+            choices: managersarray,
+            message: "Please choose the employees manager"
         }
     ])
     .then(function(answer) {
+        if (answer.managerId === "none") {
+            answer.managerId = null;
+
+            connection.query(
+                "INSERT INTO employee SET ?",
+                {
+                    first_name: answer.firstname,
+                    last_name: answer.lastname,
+                    role_id: answer.employeeRole[0],
+                    manager_id: answer.managerId
+                },
+                function(err) {
+                    if (err) throw err;
+                    console.log(chalk.blue("The employee has been added successfully!"));
+                    start();
+                }
+            );
+        } else {
         connection.query(
             "INSERT INTO employee SET ?",
             {
                 first_name: answer.firstname,
                 last_name: answer.lastname,
-                role_id: answer.employeeRole || 0,
-                manager_id: answer.managerId || 0
+                role_id: answer.employeeRole[0],
+                manager_id: answer.managerId[0]
             },
             function(err) {
                 if (err) throw err;
-                console.log("The employee has been added successfully!");
+                console.log(chalk.blue("The employee has been added successfully!"));
                 start();
             }
         );
+    }
     });
 };
 
@@ -167,7 +215,7 @@ function removeEmployee() {
                     let query = employee_id
                         connection.query("DELETE FROM employee WHERE employee.id = ?", query, (err,res) => {
                         if (err) throw err;
-                        console.log ("Employee has been successfully removed!");
+                        console.log(chalk.red("Employee has been successfully removed!"));
                         start();
                         })
                     }
@@ -198,7 +246,7 @@ function addDepartment() {
             },
             function(err) {
                 if (err) throw err;
-                console.log("The department has been added successfully!")
+                console.log(chalk.blue("The department has been added successfully!"));
                 start();
             }
         )
@@ -207,7 +255,7 @@ function addDepartment() {
 
 //FUNCTION TO VIEW ALL DEPARTMENTS
 function viewDepartments() {
-    console.log ("View All Departments Test")
+    
     let query =
     "SELECT department.id, department.dept_name FROM department";
     return connection.query(query, function (err, res) {
@@ -246,7 +294,7 @@ function viewDepartments() {
                     let query = department_id;
                         connection.query("DELETE FROM department WHERE department.id = ?", query, (err,res) => {
                         if (err) throw err;
-                        console.log ("Department has been successfully removed!");
+                        console.log (chalk.red("Department has been successfully removed!"));
                         start();
                         })
                     }
@@ -286,7 +334,7 @@ function addRole() {
                 },
                 function(err) {
                     if (err) throw err;
-                    console.log ("The role was added successfully!");
+                    console.log(chalk.blue("The role was added successfully!"));
                     start();
                 }
             );
@@ -365,7 +413,7 @@ function updateRole() {
                     let queryAnswer = [role_id, employee_id]
                     connection.query("UPDATE employee SET role_id = ? WHERE employee.id = ?", queryAnswer, (err, res) => {
                         if (err) throw err;
-                        console.log ("Employee was successfully updated!");
+                        console.log(chalk.green("Employee was successfully updated!"));
                         start();
                     })
                 })
@@ -403,7 +451,7 @@ function removeRole() {
                     let query = role_id;
                         connection.query("DELETE FROM person_role WHERE person_role.id = ?", query, (err,res) => {
                         if (err) throw err;
-                        console.log ("Role has been successfully removed!");
+                        console.log(chalk.red("Role has been successfully removed!"));
                         start();
                         })
                     }
@@ -419,18 +467,59 @@ function removeRole() {
 //Function to view all employees based on department
 function viewDept() {
     console.log("View All Emps by Department test");
-
 };
 
 //Function to view all employees by their manager
+
 function viewManager() {
     console.log("View All Emps by Manager test");
-};
+}
 
 //Function to update Manager
 function updateManager() {
-    console.log("Update Manager Test");
-};
+    
+}
+
+//View Total Budget of a department
 
 
-  
+//EMPTY ARRAYS
+function roleArray() {
+    connection.query("SELECT * FROM person_role", (err, results) => {
+        if (err) throw err;
+        rolesarray = [];
+        for (let i = 0; i < results.length; i++) {
+            rolesarray.push(results[i].id + " " + results[i].title)
+        }
+    });
+}
+
+function employeeArray () {
+    connection.query("SELECT * FROM employee", (err, results) => {
+        if (err) throw err;
+        employeesarray = [];
+        for (let i = 0; i < results.length; i++) {
+            employeesarray.push(results[i].id + " " + results[i].first_name + " " + results[i].last_name)
+        }
+    });
+}
+
+function departmentArray() {
+    connection.query("SELECT * FROM department", (err, results) => {
+        if (err) throw err;
+        departmentsarray = [];
+        for (let i = 0; i < results.length; i++) {
+            departmentsarray.push(results[i].id + " " + results[i].dept_name)
+        }
+    });
+}
+
+function managerArray() {
+    connection.query("SELECT * FROM employee WHERE manager_id IS null", (err, results) => {
+        if (err) throw err;
+        managersarray = [];
+        for (let i = 0; i < results.length; i++) {
+            managersarray.push(results[i].id + " " + results[i].first_name + " " + results[i].last_name)
+        }
+    });
+}
