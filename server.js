@@ -473,7 +473,6 @@ function removeRole() {
 
 //Function to view all employees based on department
 function viewDept() {
-    console.log("View All Emps by Department test");
     inquirer
     .prompt([
         {
@@ -496,7 +495,23 @@ function viewDept() {
 //Function to view all employees by their manager
 
 function viewManager() {
-    console.log("View All Emps by Manager test");
+    inquirer
+    .prompt([
+        {
+            name: "viewManager",
+            type: "list",
+            choices: managersarray,
+            message: "Please choose which manager you'd like to view employees of"
+        }
+    ]).then(function(answer) {
+    let query = answer.viewManager[0]  
+    connection.query(
+    "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, person_role.title, person_role.salary, department.dept_name FROM employee LEFT JOIN person_role ON employee.role_id = person_role.id LEFT JOIN department ON person_role.department_id = department.id WHERE employee.manager_id = ?", query, (err, res) => {
+       if (err) throw err;
+        console.table(res);
+        start();
+    });
+    })
 }
 
 //Function to update Manager
