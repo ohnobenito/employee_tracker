@@ -17,6 +17,7 @@ let connection = mysql.createConnection({
     database: "employee_db"
 });
 
+//empty arrays for roles, departments, employees, and managers
 let rolesarray = [];
 let departmentsarray = [];
 let employeesarray = [];
@@ -28,6 +29,7 @@ connection.connect(function(err) {
 init();
 })
 
+//ascii art logo
 function init() {
     const logoText = logo
     ({
@@ -45,6 +47,7 @@ function init() {
 
 //START FUNCTION
 function start() {
+    //Run functions to make empty arrays at start
     roleArray();
     departmentArray();
     employeeArray();
@@ -55,16 +58,79 @@ function start() {
         name: "toDo",
         type: "list",
         message: "Would you like to do?",
-        choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee", "Remove Employee", "Update Employee Role", "Update Employee Manager", "Add Role", "View All Roles", "Add Department", "View All Departments","Remove Role", "Remove Department", "Exit"]
+        choices: [
+            "Add Role", 
+            "Add Department", 
+            "Add Employee",
+            "View all employees", 
+            "View all employees by Department", 
+            "View all employees by Manager", 
+            "View All Roles",
+            "View All Departments",
+            "Update Employee Role", 
+            "Update Employee Manager",
+            "Remove Employee", 
+            "Remove Role", 
+            "Remove Department", 
+             "Exit"
+        ]
     })
     .then(function(answer) {
+    switch (answer.toDo) {
+        case 'Add Role':
+            addRole();
+            break;
+        case 'Add Department':
+            addDepartment();
+            break;
+        case 'Add Employee':
+            addEmployee();
+            break;
+        case 'View all employees':
+            viewEmployees();
+            break;
+        case 'View all employees by Department':
+            viewEmpDept();
+            break;
+        case 'View all employees by Manager':
+            viewManager();
+            break;
+        case 'View All Roles':
+            viewRoles();
+            break;
+        case 'View All Departments':
+            viewDepartments();
+            break;
+        case 'Update Employee Role':
+            updateRole();
+            break;
+        case 'Update Employee Manager':
+            updateManager();
+            break;
+        case 'Remove Employee':
+            removeEmployee();
+            break;
+        case 'Remove Role':
+            removeRole();
+            break;
+        case 'Remove Department':
+            removeDepartment();
+        case 'Exit':
+            connection.end();
+            console.log(chalk.blue('Thank you for using the Employee Management System. Goodbye.'));
+            break;
+        default:
+            return;
+    }
+})
+    /*.then(function(answer) {
         //if statements for each possible answer
         if (answer.toDo === "View all employees") {
             //insert function for viewing all employees
             viewEmployees();
         } else if (answer.toDo === "View all employees by Department") {
              //insert function for viewing all employees by dept
-            viewDept();  
+            viewEmpDept();  
         } else if (answer.toDo === "View all employees by Manager") {
             //insert function for viewing all employees by manager
             viewManager();
@@ -100,7 +166,7 @@ function start() {
             connection.end();
             console.log(chalk.green("Thank you for using Employee Tracker!"));
         };
-    })
+    }) */
 }
 
 //-------------------------
@@ -472,7 +538,7 @@ function removeRole() {
 //-------------------
 
 //Function to view all employees based on department
-function viewDept() {
+function viewEmpDept() {
     inquirer
     .prompt([
         {
