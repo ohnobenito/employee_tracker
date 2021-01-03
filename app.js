@@ -69,6 +69,7 @@ function start() {
             "View all employees by Manager", 
             "View All Roles",
             "View All Departments",
+            "View Budget By Department",
             "Update Employee Role", 
             "Update Employee Manager",
             "Remove Employee", 
@@ -117,6 +118,9 @@ function start() {
             break;
         case 'Remove Department':
             removeDepartment();
+            break;
+        case 'View Budget By Department':
+            viewBudgetDept();
             break;
         case 'Exit':
             connection.end();
@@ -412,6 +416,27 @@ function viewEmpDept() {
         let query = answer.viewDept[0]  
         connection.query(
         "SELECT employee.id, employee.first_name, employee.last_name, person_role.title, person_role.salary, department.dept_name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN person_role on person_role.id = employee.role_id INNER JOIN department on department.id = person_role.department_id left join employee e on employee.manager_id = e.id WHERE department.id = ?", query, (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            start();
+        });
+    });
+};
+
+function viewBudgetDept() {
+    inquirer
+    .prompt([
+        {
+            name: "viewDept",
+            type: "list",
+            choices: departmentsarray,
+            message: "Please choose which department you'd like to view budget of"
+        }
+    ])
+    .then(function(answer) {
+        let query = answer.viewDept[0]  
+        connection.query(
+        "SELECT SUM(person_role.salary) AS `Total Budget for Department` FROM person_role WHERE person_role.department_id = ?", query, (err, res) => {
             if (err) throw err;
             console.table(res);
             start();
