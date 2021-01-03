@@ -178,7 +178,7 @@ function addEmployee() {
         }
     ])
     .then(function(answer) {
-        if (answer.managerId === "none") {
+        if (answer.managerId === "This Employee is a manager.") {
             answer.managerId = null;
 
             connection.query(
