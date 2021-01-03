@@ -6,12 +6,13 @@ const chalk = require("chalk");
 const logo = require('asciiart-logo');
 
 
-//connect to sql database
+//TO USE APPLICATION:
+//Please enter in your mysql password to connect to sql database
 let connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "fetacheese",
+    password: "",
     database: "employee_db"
 });
 
@@ -31,7 +32,7 @@ connection.connect(function(err) {
 function init() {
     const logoText = logo
         ({
-        name: "Employee Management System",
+        name: "Content Management System",
         font: "Colossal",
         fontSize: "5px",
         borderColor: "blue",
