@@ -24,7 +24,7 @@ Content Management System is a CLI Application that allows the user to view and 
 ## Installation 
 Before using this application the user will need to run an npm install by entering in the following on the command line in the correct directory:
 `npm install`
-This will install all required dependancies into the package.json file that are require to use this application. Before use, user will need to update 
+This will install all required dependancies into the package.json file that are require to use this application. The user will also need to enter their own mysql requirements to connect to the sql database.
 
 ## Usage 
 After installation, navigate to the directory through command line and enter `node app.js` to start application. Use the arrow keys to navigate between each of the options and follow the given prompts. Application will let you choose between viewing, adding, updating, and removing different aspects
