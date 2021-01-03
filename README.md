@@ -1,13 +1,13 @@
 # **CONTENT MANAGEMENT SYSTEM**
 
 ## Description
-A CLI Application that allows the user view and interact with a company's employee database. Utilizing MySQL, this application allows the user to view employees, roles, departments, and managers for the company. This application can be used to edit and remove employees as well, based on the needs of the client. 
+Content Management System is a CLI Application that allows the user to view and interact with a company's employee database. Utilizing MySQL, this application allows the user to view employees, roles, departments, and managers for the company. This application can be used to edit and remove employees as well, based on the needs of the client. 
 
-Links to [GitHub Repo](https://github.com/ohnobenito/employee_tracker) and [Demo Video](https://drive.google.com/file/d/1YacBQFo2oNTbbEoIjrmQB2vtKX-7DxVn/view?usp=sharing)
+**Links to [GitHub Repo](https://github.com/ohnobenito/employee_tracker) and [Demo Video](https://drive.google.com/file/d/1YacBQFo2oNTbbEoIjrmQB2vtKX-7DxVn/view?usp=sharing)**
 
 ![Badge:](https://img.shields.io/badge/License-mit-brightgreen)
 
-![Launched Application GIF:](/assets/demo.gif)
+![**Launched Application GIF:**](/assets/demo.gif)
 
 
 ## Table of Contents
@@ -24,10 +24,10 @@ Links to [GitHub Repo](https://github.com/ohnobenito/employee_tracker) and [Demo
 ## Installation 
 Before using this application the user will need to run an npm install by entering in the following on the command line in the correct directory:
 `npm install`
-This will install all required dependancies into the package.json file that are require to use this application.
+This will install all required dependancies into the package.json file that are require to use this application. Before use, user will need to update 
 
 ## Usage 
-After installation, navigate to the directory through command line and enter `node app.js` to start application. Use the arrow keys to navigate between each of the options and follow the given prompts. 
+After installation, navigate to the directory through command line and enter `node app.js` to start application. Use the arrow keys to navigate between each of the options and follow the given prompts. Application will let you choose between viewing, adding, updating, and removing different aspects
 
 ## License
 This application is covered by the MIT license. Full documentation can be found [here](https://choosealicense.com/licenses/mit).
