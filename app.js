@@ -12,7 +12,7 @@ let connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "fetacheese",
     database: "employee_db"
 });
 
@@ -135,7 +135,7 @@ function start() {
 //FUNCTION TO VIEW ALL EMPLOYEES
 function viewEmployees() {
     let query = 
-    "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, person_role.title, person_role.salary, department.dept_name FROM employee LEFT JOIN person_role ON employee.role_id = person_role.id LEFT JOIN department ON person_role.department_id = department.id;";
+    "SELECT employee.id, employee.first_name, employee.last_name, person_role.title, person_role.salary, department.dept_name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN person_role on person_role.id = employee.role_id INNER JOIN department on department.id = person_role.department_id left join employee e on employee.manager_id = e.id;";
     return connection.query(query, function (err, res) {
        if (err) throw err;
         console.table(res);
@@ -411,7 +411,7 @@ function viewEmpDept() {
     .then(function(answer) {
         let query = answer.viewDept[0]  
         connection.query(
-        "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, person_role.title, person_role.salary, department.dept_name FROM employee LEFT JOIN person_role ON employee.role_id = person_role.id LEFT JOIN department ON person_role.department_id = department.id WHERE department.id = ?", query, (err, res) => {
+        "SELECT employee.id, employee.first_name, employee.last_name, person_role.title, person_role.salary, department.dept_name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN person_role on person_role.id = employee.role_id INNER JOIN department on department.id = person_role.department_id left join employee e on employee.manager_id = e.id WHERE department.id = ?", query, (err, res) => {
             if (err) throw err;
             console.table(res);
             start();
@@ -597,18 +597,13 @@ function viewManager() {
     .then(function(answer) {
         let query = answer.viewManager[0]  
         connection.query(
-        "SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id, person_role.title, person_role.salary, department.dept_name FROM employee LEFT JOIN person_role ON employee.role_id = person_role.id LEFT JOIN department ON person_role.department_id = department.id WHERE employee.manager_id = ?", query, (err, res) => {
+        "SELECT employee.id, employee.first_name, employee.last_name, person_role.title, person_role.salary, department.dept_name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN person_role on person_role.id = employee.role_id INNER JOIN department on department.id = person_role.department_id left join employee e on employee.manager_id = e.id WHERE employee.manager_id = ?", query, (err, res) => {
         if (err) throw err;
         console.table(res);
         start();
         });
     });
 };
-//-------------------
-// --- LEFT TO DO ---
-//-------------------
-
-//View Total Budget of a department
 
 //---------------------
 // --- EMPTY ARRAYS ---
